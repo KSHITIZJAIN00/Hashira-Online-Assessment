@@ -1,31 +1,38 @@
 const fs = require("fs");
 
-const data = JSON.parse(fs.readFileSync("input.json", "utf-8"));
+const data = JSON.parse(fs.readFileSync("input1.json", "utf-8"));
 
-function toint(value, base) {
-  const b = BigInt(base);
-  let res = 0n;
-  for (let i = 0; i < value.length; i++) {
-    const ch = value[i].toLowerCase();
-    let digit;
-    if (ch >= "0" && ch <= "9") digit = BigInt(ch.charCodeAt(0) - 48);
-    else digit = BigInt(ch.charCodeAt(0) - 87);
-    res = res * b + digit;
+function convert(val, base) {
+  let num = 0n, b = BigInt(base);
+  for (let ch of val.toLowerCase()) {
+    let d = ch >= "0" && ch <= "9" ? BigInt(ch) : BigInt(ch.charCodeAt(0) - 87);
+    num = num * b + d;
   }
-  return res;
+  return num;
 }
 
-let nums = [];
-
-for (const key in data) {
-  if (key !== "keys") {
-    const base = parseInt(data[key].base);
-    const value = data[key].value;
-    const num = toint(value, base);
-    nums.push(num);
+let roots = [];
+for (let k of Object.keys(data).sort((a, b) => a - b)) {
+  if (k !== "keys" && roots.length < data.keys.k) {
+    roots.push(convert(data[k].value, data[k].base));
   }
 }
 
-for (let i = 0; i < nums.length; i++) {
-  console.log(nums[i].toString());
+function findCoeff(roots) {
+  let c = [1n];
+  for (let r of roots) {
+    let next = [0n, ...c];
+    for (let i = 0; i < c.length; i++) next[i] -= c[i] * r;
+    c = next;
+  }
+  return c;
 }
+
+let coeffs = findCoeff(roots).reverse(); 
+console.log("Roots:", roots.map(r => r.toString()));
+console.log("Coeffs:", coeffs.map(c => c.toString()));
+
+fs.writeFileSync("output.json", JSON.stringify({
+  Roots: roots.map(r => r.toString()),
+  Coeffs: coeffs.map(c => c.toString())
+}, null, 2));

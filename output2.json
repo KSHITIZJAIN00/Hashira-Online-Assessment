@@ -1,15 +1,3 @@
-**Name:** Kshitiz Jain  
-**Roll Number:** 2215000954  
-
-
-Output for test case first - 
-{
-  "Roots": ["4", "7", "12"],
-  "Coeffs": ["-336", "160", "-23", "1"]
-}
-
-Output for test case second - 
-
 {
   "Roots": [
     "995085094601491",
@@ -31,4 +19,3 @@ Output for test case second -
     "1"
   ]
 }
-
